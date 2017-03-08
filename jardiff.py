@@ -66,7 +66,7 @@ def _write_infos_to_temp(temp_folder, original_stat, infos):
 def _exec_diff(base_path, one_path, two_path):
   one_path = os.path.relpath(one_path, base_path)
   two_path = os.path.relpath(two_path, base_path)
-  subprocess.call(['diff', '-U', '0', '-N', one_path, two_path], cwd=base_path)
+  subprocess.call(['colordiff', one_path, two_path], cwd=base_path)
 
 
 def process_archive(temp_folder, jar):
@@ -103,16 +103,13 @@ def _main(old_archive, new_archive, diff_script=None):
   old_data = process_archive(temp_folder, old_archive)
   new_data = process_archive(temp_folder, new_archive)
 
-  if diff_script:
-    subprocess.call('%s %s %s %s' % (diff_script, temp_folder, old_data, new_data), shell = True)
-  else:
-    _exec_diff(temp_folder, old_data, new_data)
+  _exec_diff(temp_folder, old_data, new_data)
 
   shutil.rmtree(temp_folder)
 
 
 if __name__ == '__main__':
   if len(sys.argv) not in [3, 4]:
-    print('Usage: %s old.aar new.aar [diff_script]' % sys.argv[0])
+    print('Usage: %s old.aar new.aar' % sys.argv[0])
     sys.exit(1)
   _main(*sys.argv[1:])
